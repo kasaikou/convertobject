@@ -20,8 +20,8 @@ import "github.com/streamwest-1629/convertobject/util"
 func ConvertoString(src, dst interface{}, property string) error {
 	if destination, ok := dst.(*string); !ok {
 		panic(util.ErrInvalidType(property, destination, dst))
-	} else if val, ok := src.(*string); ok {
-		*destination = *val
+	} else if val, ok := src.(string); ok {
+		*destination = val
 	} else {
 		return util.ErrInvalidType(property, destination, src)
 	}

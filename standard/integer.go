@@ -25,33 +25,33 @@ import (
 func ConvertoInt64(src, dst interface{}, property string) error {
 	if destination, ok := dst.(*int64); !ok {
 		panic(util.ErrInvalidType(property, destination, dst).Error())
-	} else if val, ok := src.(*int64); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*int32); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*int16); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*int8); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*int); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*uint64); ok {
-		if *val > math.MaxInt64 {
+	} else if val, ok := src.(int64); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(int32); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(int16); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(int8); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(int); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(uint64); ok {
+		if val > math.MaxInt64 {
 			return util.ErrInvalidType(property, destination, val)
 		}
-		*destination = int64(*val)
-	} else if val, ok := src.(*uint32); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*uint16); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*uint8); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*uint); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*byte); ok {
-		*destination = int64(*val)
-	} else if val, ok := src.(*string); ok {
-		if val, err := strconv.ParseInt(*val, 0, 64); err != nil {
+		*destination = int64(val)
+	} else if val, ok := src.(uint32); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(uint16); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(uint8); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(uint); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(byte); ok {
+		*destination = int64(val)
+	} else if val, ok := src.(string); ok {
+		if val, err := strconv.ParseInt(val, 0, 64); err != nil {
 			return err
 		} else {
 			*destination = val
@@ -66,45 +66,45 @@ func ConvertoUint64(src, dst interface{}, property string) error {
 
 	if destination, ok := dst.(*uint64); !ok {
 		panic(util.ErrInvalidType(property, destination, dst).Error())
-	} else if val, ok := src.(*int64); ok {
-		if *val < 0 {
+	} else if val, ok := src.(int64); ok {
+		if val < 0 {
 			return util.ErrInvalidType(property, destination, val)
 		}
-		*destination = uint64(*val)
-	} else if val, ok := src.(*int32); ok {
-		if *val < 0 {
+		*destination = uint64(val)
+	} else if val, ok := src.(int32); ok {
+		if val < 0 {
 			return util.ErrInvalidType(property, destination, val)
 		}
-		*destination = uint64(*val)
-	} else if val, ok := src.(*int16); ok {
-		if *val < 0 {
+		*destination = uint64(val)
+	} else if val, ok := src.(int16); ok {
+		if val < 0 {
 			return util.ErrInvalidType(property, destination, val)
 		}
-		*destination = uint64(*val)
-	} else if val, ok := src.(*int8); ok {
-		if *val < 0 {
+		*destination = uint64(val)
+	} else if val, ok := src.(int8); ok {
+		if val < 0 {
 			return util.ErrInvalidType(property, destination, val)
 		}
-		*destination = uint64(*val)
-	} else if val, ok := src.(*int); ok {
-		if *val < 0 {
+		*destination = uint64(val)
+	} else if val, ok := src.(int); ok {
+		if val < 0 {
 			return util.ErrInvalidType(property, destination, val)
 		}
-		*destination = uint64(*val)
-	} else if val, ok := src.(*uint64); ok {
-		*destination = uint64(*val)
-	} else if val, ok := src.(*uint32); ok {
-		*destination = uint64(*val)
-	} else if val, ok := src.(*uint16); ok {
-		*destination = uint64(*val)
-	} else if val, ok := src.(*uint8); ok {
-		*destination = uint64(*val)
-	} else if val, ok := src.(*uint); ok {
-		*destination = uint64(*val)
-	} else if val, ok := src.(*byte); ok {
-		*destination = uint64(*val)
-	} else if val, ok := src.(*string); ok {
-		if val, err := strconv.ParseUint(*val, 0, 64); err != nil {
+		*destination = uint64(val)
+	} else if val, ok := src.(uint64); ok {
+		*destination = uint64(val)
+	} else if val, ok := src.(uint32); ok {
+		*destination = uint64(val)
+	} else if val, ok := src.(uint16); ok {
+		*destination = uint64(val)
+	} else if val, ok := src.(uint8); ok {
+		*destination = uint64(val)
+	} else if val, ok := src.(uint); ok {
+		*destination = uint64(val)
+	} else if val, ok := src.(byte); ok {
+		*destination = uint64(val)
+	} else if val, ok := src.(string); ok {
+		if val, err := strconv.ParseUint(val, 0, 64); err != nil {
 			return err
 		} else {
 			*destination = val

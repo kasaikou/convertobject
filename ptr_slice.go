@@ -24,11 +24,11 @@ import (
 
 func (p *Ptr) Convert(src, dst interface{}, property string) error {
 
-	if ptr := reflect.ValueOf(dst).Elem(); ptr.Kind() != reflect.Ptr {
-		panic(util.ErrInvalidType(property, reflect.New(p.gen).Addr().Addr(), dst))
+	if destination := reflect.ValueOf(dst).Elem(); destination.Kind() != reflect.Ptr {
+		panic(util.ErrInvalidType(property, reflect.New(p.gen).Addr(), dst))
 	} else {
-		ptr.Set(reflect.New(p.gen))
-		return p.Internal.Convert(src, ptr.Interface(), property)
+		destination.Set(reflect.New(p.gen))
+		return p.Internal.Convert(src, destination.Interface(), property)
 	}
 }
 
@@ -36,14 +36,17 @@ func (s *Slice) Convert(src, dst interface{}, property string) error {
 
 	if destination := reflect.ValueOf(dst).Elem(); destination.Kind() != reflect.Slice {
 		panic(util.ErrInvalidType(property, reflect.MakeSlice(s.gen, 0, 0).Addr(), dst))
-	} else if buf, ok := src.(*[]interface{}); ok {
+	} else if buf, ok := src.([]interface{}); ok {
 
-		destination.Set(reflect.MakeSlice(s.gen, len(*buf), 0))
-		for i, val := range *buf {
-			if err := s.Internal.Convert(val, destination.Index(i).Addr().Interface(), property+"["+strconv.Itoa(i)+"]"); err != nil {
+		destination.Set(reflect.MakeSlice(reflect.SliceOf(s.gen), len(buf), len(buf)))
+		for i, val := range buf {
+			ptr := destination.Index(i).Addr().Interface()
+			if err := s.Internal.Convert(val, ptr, property+"["+strconv.Itoa(i)+"]"); err != nil {
 				return err
 			}
 		}
+	} else {
+		return util.ErrInvalidType(property, src, dst)
 	}
 
 	return nil

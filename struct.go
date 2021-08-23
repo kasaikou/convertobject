@@ -42,21 +42,12 @@ func CompileStruct(target interface{}) (compiled *Struct, err error) {
 
 	// initialize to check cache
 	__type := formatStructType(reflect.TypeOf(target))
-	__name := util.TypeFullname(__type)
-
-	// check cache
-	if val, exist := PreCompiled[__name]; exist {
-		return &val, nil
+	if convert, err := selectConvert(__type, &PreCompiled); err != nil {
+		return nil, err
 	} else {
-
-		// compile
-		if compiled, err := compileStruct(__type, &PreCompiled); err != nil {
-			return nil, err
-		} else {
-			PreCompiled[__name] = *compiled
-			return compiled, nil
-		}
+		return convert.(*Struct), nil
 	}
+
 }
 
 // Build converter from interface{} to structure object.
@@ -65,7 +56,12 @@ func CompileStruct(target interface{}) (compiled *Struct, err error) {
 func CompileStructIndepended(target interface{}) (compiled *Struct, err error) {
 
 	// compile
-	return compileStruct(formatStructType(reflect.TypeOf(target)), &map[string]Struct{})
+	__type := formatStructType(reflect.TypeOf(target))
+	if convert, err := selectConvert(__type, &map[string]*Struct{}); err != nil {
+		return nil, err
+	} else {
+		return convert.(*Struct), nil
+	}
 
 }
 
@@ -113,9 +109,9 @@ func formatStructType(__type reflect.Type) reflect.Type {
 	}
 }
 
-func compileStruct(__type reflect.Type, cache *map[string]Struct) (compiled *Struct, err error) {
+func compileStruct(__type reflect.Type, compiled *Struct, cache *map[string]*Struct) error {
 
-	compiled = &Struct{
+	(*compiled) = Struct{
 		Members:         make([]Member, 0),
 		Type:            __type,
 		allowIntegerKey: true,
@@ -138,7 +134,7 @@ func compileStruct(__type reflect.Type, cache *map[string]Struct) (compiled *Str
 			}
 
 			if convert, err := selectConvert(field.Type, cache); err != nil {
-				return nil, err
+				return err
 			} else {
 				compiled.Members = append(compiled.Members,
 					Member{
@@ -151,7 +147,7 @@ func compileStruct(__type reflect.Type, cache *map[string]Struct) (compiled *Str
 			}
 		}
 	}
-	return compiled, nil
+	return nil
 }
 
 func (c *Struct) Convert(src, dst interface{}, property string) error {
@@ -188,23 +184,23 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 	}
 
 	// convert from map[interface{}]interface{}
-	if mapped, ok := src.(*map[interface{}]interface{}); ok {
+	if mapped, ok := src.(map[interface{}]interface{}); ok {
 		for _, member := range c.Members {
 
 			memProperty := MemberProperty(&member)
 
-			if buf, exist := (*mapped)[member.Keyname]; exist {
+			if buf, exist := mapped[member.Keyname]; exist {
 				if err := AssignToMember(&member, buf, memProperty); err != nil {
 					return err
 				}
 				continue
 			} else if c.allowIntegerKey {
-				if buf, exist := (*mapped)[int(member.Keynumber)]; exist {
+				if buf, exist := mapped[int(member.Keynumber)]; exist {
 					if err := AssignToMember(&member, buf, memProperty); err != nil {
 						return err
 					}
 					continue
-				} else if buf, exist := (*mapped)[int64(member.Keynumber)]; exist {
+				} else if buf, exist := mapped[int64(member.Keynumber)]; exist {
 					if err := AssignToMember(&member, buf, memProperty); err != nil {
 						return err
 					}
@@ -221,12 +217,12 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 	}
 
 	// convert from map[string]interface{}
-	if mapped, ok := src.(*map[string]interface{}); ok {
+	if mapped, ok := src.(map[string]interface{}); ok {
 		for _, member := range c.Members {
 
 			memProperty := MemberProperty(&member)
 
-			if buf, exist := (*mapped)[member.Keyname]; exist {
+			if buf, exist := mapped[member.Keyname]; exist {
 				if err := AssignToMember(&member, buf, memProperty); err != nil {
 					return err
 				}
@@ -241,13 +237,13 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 	if c.allowIntegerKey {
 
 		// convert from map[int]interface{}
-		if mapped, ok := src.(*map[int]interface{}); ok {
+		if mapped, ok := src.(map[int]interface{}); ok {
 
 			for _, member := range c.Members {
 
 				memProperty := MemberProperty(&member)
 
-				if buf, exist := (*mapped)[int(member.Keynumber)]; exist {
+				if buf, exist := mapped[int(member.Keynumber)]; exist {
 					if err := AssignToMember(&member, buf, memProperty); err != nil {
 						return err
 					}
@@ -260,13 +256,13 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 		}
 
 		// convert from map[int64]interface{}
-		if mapped, ok := src.(*map[int64]interface{}); ok {
+		if mapped, ok := src.(map[int64]interface{}); ok {
 
 			for _, member := range c.Members {
 
 				memProperty := MemberProperty(&member)
 
-				if buf, exist := (*mapped)[int64(member.Keynumber)]; exist {
+				if buf, exist := mapped[int64(member.Keynumber)]; exist {
 					if err := AssignToMember(&member, buf, memProperty); err != nil {
 						return err
 					}

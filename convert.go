@@ -23,6 +23,15 @@ import (
 )
 
 // TODO: WRITE COMMENT
+func DirectConvert(src interface{}, dst interface{}) error {
+	if c, err := selectConvert(reflect.TypeOf(dst).Elem(), &PreCompiled); err != nil {
+		return err
+	} else {
+		return c.Convert(src, dst, "")
+	}
+}
+
+// TODO: WRITE COMMENT
 func GeneratePtr(src interface{}, converter Convert, __type reflect.Type, property string) (destPtr interface{}, err error) {
 
 	destPtr = reflect.New(__type).Interface()
@@ -34,7 +43,7 @@ func (c ConvertFunc) Convert(src, dst interface{}, property string) error {
 	return c(src, dst, property)
 }
 
-func selectConvert(__type reflect.Type, cache *map[string]Struct) (Convert, error) {
+func selectConvert(__type reflect.Type, cache *map[string]*Struct) (Convert, error) {
 	switch __type.Kind() {
 	case reflect.Int64:
 		return ConvertFunc(standard.ConvertoInt64), nil
@@ -90,15 +99,18 @@ func selectConvert(__type reflect.Type, cache *map[string]Struct) (Convert, erro
 
 		// check cache
 		if val, exist := (*cache)[__name]; exist {
-			return &val, nil
+			return val, nil
 		} else {
 
+			result := new(Struct)
+			(*cache)[__name] = result
+
 			// compile
-			if compiled, err := compileStruct(__type, cache); err != nil {
+			if err := compileStruct(__type, result, cache); err != nil {
+				delete(*cache, __name)
 				return nil, err
 			} else {
-				(*cache)[__name] = *compiled
-				return compiled, nil
+				return (*cache)[__name], nil
 			}
 		}
 	}

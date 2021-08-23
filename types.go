@@ -69,5 +69,5 @@ type (
 
 var (
 	// Pre-compiled converters from maps to struct.
-	PreCompiled = make(map[string]Struct)
+	PreCompiled = make(map[string]*Struct)
 )

@@ -24,34 +24,34 @@ import (
 func ConvertoFloat64(src, dst interface{}, property string) error {
 	if destination, ok := dst.(*float64); !ok {
 		panic(util.ErrInvalidType(property, destination, dst).Error())
-	} else if val, ok := src.(*float64); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*float32); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*int64); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*int32); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*int16); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*int8); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*int); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*uint64); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*uint32); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*uint16); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*uint8); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*uint); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*byte); ok {
-		*destination = float64(*val)
-	} else if val, ok := src.(*string); ok {
-		if val, err := strconv.ParseFloat(*val, 64); err != nil {
+	} else if val, ok := src.(float64); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(float32); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(int64); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(int32); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(int16); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(int8); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(int); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(uint64); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(uint32); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(uint16); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(uint8); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(uint); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(byte); ok {
+		*destination = float64(val)
+	} else if val, ok := src.(string); ok {
+		if val, err := strconv.ParseFloat(val, 64); err != nil {
 			return err
 		} else {
 			*destination = val
