@@ -25,8 +25,8 @@ import (
 
 const (
 	Label              = `map-to`
-	LabelRegexp        = `^(?P<key>[a-zA-Z0-9][a-zA-Z0-9_-]*)(\!)?$`
-	LabelRequireRegexp = `[a-zA-Z0-9][a-zA-Z0-9_-]*(\!)$`
+	LabelRegexp        = `^(?P<key>[a-zA-Z0-9][a-zA-Z0-9_-]*)(!)?$`
+	LabelRequireRegexp = `[a-zA-Z0-9][a-zA-Z0-9_-]*(!)$`
 	LabelEmbed         = `<-`
 )
 
@@ -137,13 +137,16 @@ func compileStruct(__type reflect.Type, compiled *Struct, cache *map[string]*Str
 			if convert, err := selectConvert(field.Type, cache); err != nil {
 				return err
 			} else {
+
+				required := labelRequireMatches.MatchString(label)
+
 				compiled.Members = append(compiled.Members,
 					Member{
 						Convert:   convert,
 						Keyname:   keyname,
 						Keynumber: keynumber,
 						MemberAt:  i,
-						Required:  labelRequireMatches.MatchString(keyname),
+						Required:  required,
 					})
 			}
 		} else if label == LabelEmbed {
@@ -228,7 +231,7 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 
 			// check property is required member
 			if member.Required {
-				return util.ErrorCannotFound(memProperty)
+				return util.ErrCannotFound(memProperty)
 			}
 		}
 		return nil
@@ -249,7 +252,7 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 					return err
 				}
 			} else if member.Required {
-				return util.ErrorCannotFound(memProperty)
+				return util.ErrCannotFound(memProperty)
 			}
 		}
 
@@ -275,7 +278,7 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 						return err
 					}
 				} else if member.Required {
-					return util.ErrorCannotFound(memProperty)
+					return util.ErrCannotFound(memProperty)
 				}
 			}
 
@@ -299,7 +302,7 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 						return err
 					}
 				} else if member.Required {
-					return util.ErrorCannotFound(memProperty)
+					return util.ErrCannotFound(memProperty)
 				}
 			}
 

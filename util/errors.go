@@ -40,9 +40,9 @@ func ErrInvalidType(propName string, want interface{}, has interface{}) error {
 }
 
 func (e *errCannotFound) Error() string {
-	return e.propName + "is required property, but cannot found it"
+	return e.propName + " is required property, but cannot found it"
 }
-func ErrorCannotFound(propName string) error {
+func ErrCannotFound(propName string) error {
 	return &errCannotFound{
 		propName: propName,
 	}
