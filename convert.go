@@ -113,6 +113,19 @@ func selectConvert(__type reflect.Type, cache *map[string]*Struct) (Convert, err
 				return (*cache)[__name], nil
 			}
 		}
+
+	case reflect.Map:
+
+		keyType, valType := __type.Key(), __type.Elem()
+		keyKind, valKind := keyType.Kind(), valType.Kind()
+
+		if keyKind == reflect.Interface && valKind == reflect.Interface {
+			return ConvertFunc(standard.ConvertoInterfaceKeyInterfaceMap), nil
+		} else if keyKind == reflect.String && valKind == reflect.Interface {
+			return ConvertFunc(standard.ConvertoStringKeyInterfaceMap), nil
+		} else if keyKind == reflect.String && valKind == reflect.String {
+			return ConvertFunc(standard.ConvertoStringKeyStringMap), nil
+		}
 	}
 
 	panic("not supported type: " + util.TypeFullname(__type))
