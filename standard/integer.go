@@ -37,7 +37,7 @@ func ConvertoInt64(src, dst interface{}, property string) error {
 		*destination = int64(val)
 	} else if val, ok := src.(uint64); ok {
 		if val > math.MaxInt64 {
-			return util.ErrInvalidType(property, destination, val)
+			return util.ErrInvalidType(property, *destination, val)
 		}
 		*destination = int64(val)
 	} else if val, ok := src.(uint32); ok {
@@ -57,7 +57,7 @@ func ConvertoInt64(src, dst interface{}, property string) error {
 			*destination = val
 		}
 	} else {
-		util.ErrInvalidType(property, destination, src)
+		util.ErrInvalidType(property, *destination, src)
 	}
 	return nil
 }
@@ -68,27 +68,27 @@ func ConvertoUint64(src, dst interface{}, property string) error {
 		panic(util.ErrInvalidType(property, destination, dst).Error())
 	} else if val, ok := src.(int64); ok {
 		if val < 0 {
-			return util.ErrInvalidType(property, destination, val)
+			return util.ErrInvalidType(property, *destination, val)
 		}
 		*destination = uint64(val)
 	} else if val, ok := src.(int32); ok {
 		if val < 0 {
-			return util.ErrInvalidType(property, destination, val)
+			return util.ErrInvalidType(property, *destination, val)
 		}
 		*destination = uint64(val)
 	} else if val, ok := src.(int16); ok {
 		if val < 0 {
-			return util.ErrInvalidType(property, destination, val)
+			return util.ErrInvalidType(property, *destination, val)
 		}
 		*destination = uint64(val)
 	} else if val, ok := src.(int8); ok {
 		if val < 0 {
-			return util.ErrInvalidType(property, destination, val)
+			return util.ErrInvalidType(property, *destination, val)
 		}
 		*destination = uint64(val)
 	} else if val, ok := src.(int); ok {
 		if val < 0 {
-			return util.ErrInvalidType(property, destination, val)
+			return util.ErrInvalidType(property, *destination, val)
 		}
 		*destination = uint64(val)
 	} else if val, ok := src.(uint64); ok {
@@ -110,7 +110,7 @@ func ConvertoUint64(src, dst interface{}, property string) error {
 			*destination = val
 		}
 	} else {
-		util.ErrInvalidType(property, destination, src)
+		util.ErrInvalidType(property, *destination, src)
 	}
 	return nil
 }

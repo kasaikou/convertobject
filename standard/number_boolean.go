@@ -57,7 +57,7 @@ func ConvertoFloat64(src, dst interface{}, property string) error {
 			*destination = val
 		}
 	} else {
-		return util.ErrInvalidType(property, destination, src)
+		return util.ErrInvalidType(property, *destination, src)
 	}
 	return nil
 
@@ -88,7 +88,7 @@ func ConvertoBool(src, dst interface{}, property string) error {
 			*destination = val
 		}
 	} else {
-		return util.ErrInvalidType(property, destination, src)
+		return util.ErrInvalidType(property, *destination, src)
 	}
 	return nil
 }

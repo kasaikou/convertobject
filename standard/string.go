@@ -15,15 +15,23 @@
 
 package standard
 
-import "github.com/streamwest-1629/convertobject/util"
+import (
+	"strconv"
+
+	"github.com/streamwest-1629/convertobject/util"
+)
 
 func ConvertoString(src, dst interface{}, property string) error {
 	if destination, ok := dst.(*string); !ok {
 		panic(util.ErrInvalidType(property, destination, dst))
 	} else if val, ok := src.(string); ok {
 		*destination = val
+	} else if val, ok := src.(int); ok {
+		*destination = strconv.Itoa(val)
+	} else if val, ok := src.(int64); ok {
+		*destination = strconv.FormatInt(val, 10)
 	} else {
-		return util.ErrInvalidType(property, destination, src)
+		return util.ErrInvalidType(property, *destination, src)
 	}
 	return nil
 }
