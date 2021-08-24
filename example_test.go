@@ -31,6 +31,10 @@ func TestExample(t *testing.T) {
 
 func Example() {
 
+	type Data struct {
+		Version float64 `map-to:"version"`
+	}
+
 	// Definates target structure type
 	type Person struct {
 		Name     string   `map-to:"name!"`
@@ -38,6 +42,7 @@ func Example() {
 		Old      int      `map-to:"old"`
 		Children []Person `map-to:"children"`
 		Partner  *Person  `map-to:"partner"`
+		Data     `map-to:"info"`
 	}
 
 	// Source map and Destination object defines
@@ -54,6 +59,9 @@ func Example() {
 		"partner": map[string]interface{}{
 			"name": "Ada",
 			"date": 19950425,
+		},
+		"info": map[string]interface{}{
+			"version": 0.11,
 		},
 	}, Person{Old: -1}
 
