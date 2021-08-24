@@ -52,6 +52,8 @@ type (
 		MemberAt int
 		// Shows whether converter occers error when source map doesn't have value with same keyname.
 		Required bool
+		// Embed value, uses same map as given source value.
+		Embed bool
 	}
 
 	// Defines to buffer instance and convert from interface{}, uses only structure instance.

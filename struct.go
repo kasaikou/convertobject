@@ -26,7 +26,8 @@ import (
 const (
 	Label              = `map-to`
 	LabelRegexp        = `^(?P<key>[a-zA-Z0-9][a-zA-Z0-9_-]*)(\!)?$`
-	LabelRequireRegexp = `^[a-zA-Z0-9][a-zA-Z0-9_-]*(\!)$`
+	LabelRequireRegexp = `[a-zA-Z0-9][a-zA-Z0-9_-]*(\!)$`
+	LabelEmbed         = `<-`
 )
 
 var (
@@ -145,6 +146,18 @@ func compileStruct(__type reflect.Type, compiled *Struct, cache *map[string]*Str
 						Required:  labelRequireMatches.MatchString(keyname),
 					})
 			}
+		} else if label == LabelEmbed {
+
+			if convert, err := selectConvert(field.Type, cache); err != nil {
+				return err
+			} else {
+				compiled.Members = append(compiled.Members,
+					Member{
+						Convert:  convert,
+						Embed:    true,
+						MemberAt: i,
+					})
+			}
 		}
 	}
 	return nil
@@ -189,7 +202,12 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 
 			memProperty := MemberProperty(&member)
 
-			if buf, exist := mapped[member.Keyname]; exist {
+			if member.Embed {
+				if err := AssignToMember(&member, src, memProperty); err != nil {
+					return err
+				}
+				continue
+			} else if buf, exist := mapped[member.Keyname]; exist {
 				if err := AssignToMember(&member, buf, memProperty); err != nil {
 					return err
 				}
@@ -221,8 +239,12 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 		for _, member := range c.Members {
 
 			memProperty := MemberProperty(&member)
-
-			if buf, exist := mapped[member.Keyname]; exist {
+			if member.Embed {
+				if err := AssignToMember(&member, src, memProperty); err != nil {
+					return err
+				}
+				continue
+			} else if buf, exist := mapped[member.Keyname]; exist {
 				if err := AssignToMember(&member, buf, memProperty); err != nil {
 					return err
 				}
@@ -243,7 +265,12 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 
 				memProperty := MemberProperty(&member)
 
-				if buf, exist := mapped[int(member.Keynumber)]; exist {
+				if member.Embed {
+					if err := AssignToMember(&member, src, memProperty); err != nil {
+						return err
+					}
+					continue
+				} else if buf, exist := mapped[int(member.Keynumber)]; exist {
 					if err := AssignToMember(&member, buf, memProperty); err != nil {
 						return err
 					}
@@ -262,7 +289,12 @@ func (c *Struct) Convert(src, dst interface{}, property string) error {
 
 				memProperty := MemberProperty(&member)
 
-				if buf, exist := mapped[int64(member.Keynumber)]; exist {
+				if member.Embed {
+					if err := AssignToMember(&member, src, memProperty); err != nil {
+						return err
+					}
+					continue
+				} else if buf, exist := mapped[int64(member.Keynumber)]; exist {
 					if err := AssignToMember(&member, buf, memProperty); err != nil {
 						return err
 					}

@@ -37,12 +37,12 @@ func Example() {
 
 	// Definates target structure type
 	type Person struct {
-		Name     string   `map-to:"name!"`
-		Date     int64    `map-to:"date!"`
-		Old      int      `map-to:"old"`
-		Children []Person `map-to:"children"`
-		Partner  *Person  `map-to:"partner"`
-		Data     `map-to:"info"`
+		Name     string        `map-to:"name!"`    // required string value
+		Date     int64         `map-to:"date!"`    // required integer
+		Old      int           `map-to:"old"`      // optional value
+		Children []Person      `map-to:"children"` // children map array
+		Partner  *Person       `map-to:"partner"`  // children map
+		Data     `map-to:"<-"` // embedded map(shared map)
 	}
 
 	// Source map and Destination object defines
@@ -60,9 +60,7 @@ func Example() {
 			"name": "Ada",
 			"date": 19950425,
 		},
-		"info": map[string]interface{}{
-			"version": 0.11,
-		},
+		"version": 0.11,
 	}, Person{Old: -1}
 
 	// Compile and Convert
