@@ -40,7 +40,12 @@ func (s *Slice) Convert(src, dst interface{}, property string) error {
 		panic(util.ErrInvalidType(property, reflect.MakeSlice(s.gen, 0, 0).Addr(), dst))
 	} else if buf, ok := src.([]interface{}); ok {
 
-		destination.Set(reflect.MakeSlice(reflect.SliceOf(s.gen), len(buf), len(buf)))
+		if destination.IsNil() {
+			destination.Set(reflect.MakeSlice(reflect.SliceOf(s.gen), len(buf), len(buf)))
+		} else {
+			destination.SetLen(len(buf) + destination.Len())
+		}
+
 		for i, val := range buf {
 			ptr := destination.Index(i).Addr().Interface()
 			if err := s.Internal.Convert(val, ptr, property+"["+strconv.Itoa(i)+"]"); err != nil {
