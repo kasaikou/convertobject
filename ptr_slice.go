@@ -27,7 +27,9 @@ func (p *Ptr) Convert(src, dst interface{}, property string) error {
 	if destination := reflect.ValueOf(dst).Elem(); destination.Kind() != reflect.Ptr {
 		panic(util.ErrInvalidType(property, reflect.New(p.gen).Addr(), dst))
 	} else {
-		destination.Set(reflect.New(p.gen))
+		if destination.IsNil() {
+			destination.Set(reflect.New(p.gen))
+		}
 		return p.Internal.Convert(src, destination.Interface(), property)
 	}
 }
